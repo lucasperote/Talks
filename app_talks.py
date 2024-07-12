@@ -1,23 +1,37 @@
 import streamlit as st
+import pandas as pd
 from joblib import load
-import numpy as np
 
-model = load('meumodelo.jbl')
+# Carregar o modelo treinado
+model = load('talksmodelo.jbl')
 
-st.title('Modelo de Credito')
+# Título do aplicativo
+st.title('Aplicativo de Previsão')
 
-feature1 = st.number_input('Digite a taxa de débito em relação a renda:', format="%.2f")
-feature2 = st.number_input('Digite a taxa de mantimentos em relação a renda:', format="%.2f")
-feature3 = st.number_input('Digite a taxa de renda:', format="%.2f")
+# Widgets para entrada de dados
+st.sidebar.header('Parâmetros de Entrada')
+r_debt_income = st.sidebar.slider('R_DEBT_INCOME', min_value=0.0, max_value=1.0, value=0.5)
+r_utilities_income = st.sidebar.slider('R_UTILITIES_INCOME', min_value=0.0, max_value=1.0, value=0.5)
+t_health_12 = st.sidebar.slider('T_HEALTH_12', min_value=0.0, max_value=100.0, value=50.0)
 
-if st.button('Predizer'):
-    input_features = np.array([feature1, feature2, feature3]).reshape(1, -1)
+# Preparar dados para fazer a previsão
+input_data = pd.DataFrame({
+    'R_DEBT_INCOME': [r_debt_income],
+    'R_UTILITIES_INCOME': [r_utilities_income],
+    'T_HEALTH_12': [t_health_12]
+})
 
-    prediction = model.predict(input_features)
-    prediction_proda = model.predict_proba(input_features)
+# Realizar a previsão usando o modelo carregado
+prediction = model.predict(input_data)
+prediction_proba = model.predict_proba(input_data)
 
-    if prediction[0] == 1:
-        st.write(f'Credito Aprovado!')
-    else:
-        st.write(f'Credito em Analise! Forneca mais dados.')
-    st.write(f'Probabilidades de aprovacao:{prediction_proda[:, 1]}')
+# Mostrar o resultado da previsão
+st.subheader('Resultado da Previsão')
+if prediction[0] == 0:
+    st.write('Não Default')
+else:
+    st.write('Default')
+
+# Mostrar a probabilidade da previsão
+st.subheader('Probabilidade')
+st.write(f'Probabilidade de Default: {prediction_proba[0][1]:.2f}')
