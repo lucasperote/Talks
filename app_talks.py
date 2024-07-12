@@ -1,6 +1,7 @@
 import streamlit as st
 import pandas as pd
 from joblib import load
+import xgboost  # Certifique-se de que a biblioteca usada para treinar o modelo está importada
 
 # Carregar o modelo treinado
 model = load('talksmodelo.jbl')
