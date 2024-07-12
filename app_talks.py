@@ -1,13 +1,13 @@
 import streamlit as st
 import pandas as pd
 from joblib import load
-import xgboost  # Certifique-se de que a biblioteca usada para treinar o modelo está importada
+import xgboost  
 
 # Carregar o modelo treinado
 model = load('talksmodelo.jbl')
 
 # Título do aplicativo
-st.title('Aplicativo de Previsão')
+st.title('Modelo de Crédito')
 
 # Widgets para entrada de dados
 st.sidebar.header('Parâmetros de Entrada')
@@ -29,10 +29,10 @@ prediction_proba = model.predict_proba(input_data)
 # Mostrar o resultado da previsão
 st.subheader('Resultado da Previsão')
 if prediction[0] == 0:
-    st.write('Não Default')
+    st.write('Crédito não aprovado!')
 else:
-    st.write('Default')
+    st.write('Crédito aprovado!')
 
 # Mostrar a probabilidade da previsão
 st.subheader('Probabilidade')
-st.write(f'Probabilidade de Default: {prediction_proba[0][1]:.2f}')
+st.write(f'Probabilidade de Aprovação: {prediction_proba[0][1]:.2f}')
